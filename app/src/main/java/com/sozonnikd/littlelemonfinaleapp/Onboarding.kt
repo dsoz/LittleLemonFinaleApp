@@ -66,7 +66,6 @@ fun Onboarding(navController: NavHostController) {
         Text(
             text = stringResource(id = R.string.greetings_onboarding),
             style = Typography.h5,
-            //fontSize = 20.sp,
             color = Color.White,
             modifier = Modifier
                 .background(colorResource(id = R.color.grey_main), RectangleShape)
@@ -79,7 +78,6 @@ fun Onboarding(navController: NavHostController) {
             text = stringResource(id = R.string.personal_info),
             style = Typography.h5,
             fontWeight = FontWeight.Bold,
-           // fontSize = 18.sp,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(10.dp, 50.dp),
@@ -167,4 +165,27 @@ fun saveData(context: Context, firstName: String, lastName: String, email: Strin
         .putString("lastName", lastName)
         .putString("email", email)
         .commit()
+}
+
+
+@Composable
+fun TextFieldInputAndDescription(inputValue: String,
+                                 descriptionResource: Int,
+                                 onValueChange: (String) -> Unit = {},
+                                 readOnly: Boolean = false, ) {
+    Text(
+        text = stringResource(descriptionResource),
+        style = Typography.h6,
+        modifier = Modifier
+            //.align(Alignment.Start)
+            .padding(start = 10.dp, bottom = 5.dp))
+    OutlinedTextField(
+        value = inputValue,
+        onValueChange = onValueChange,
+        readOnly = readOnly,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 10.dp, end = 10.dp, bottom = 30.dp),
+        shape = RoundedCornerShape(8.dp),
+    )
 }

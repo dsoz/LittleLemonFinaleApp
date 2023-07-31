@@ -18,6 +18,13 @@ val KarlaRegular = FontFamily(
 
 val Typography = Typography(
 
+    body1 = TextStyle(
+        fontFamily = KarlaRegular,
+        fontWeight = FontWeight.Normal,
+        fontSize = 18.sp,
+        lineHeight = 20.sp,
+        letterSpacing = 0.sp
+    ),
     h6 = TextStyle(
         fontFamily = MarkaziRegular,
         fontWeight = FontWeight.Normal,

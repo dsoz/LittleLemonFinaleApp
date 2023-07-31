@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -37,16 +38,16 @@ fun Profile(navController: NavHostController) {
     val email = sharedPreferences.getString("email", "") ?: ""
 
     Column(
+        horizontalAlignment = Alignment.Start,
         modifier = Modifier
             .fillMaxSize()
-            .padding(start = 10.dp, end = 10.dp
-            ),
-        horizontalAlignment = Alignment.CenterHorizontally,
+            .padding(start = 10.dp, end = 10.dp),
     ) {
         Image(
             painter = painterResource(id = R.drawable.logo),
             contentDescription = "restaurant logo",
             modifier = Modifier
+                .align(Alignment.CenterHorizontally)
                 .width(150.dp)
                 .padding(10.dp)
         )
@@ -57,57 +58,18 @@ fun Profile(navController: NavHostController) {
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 100.dp, bottom = 50.dp),
-            textAlign = TextAlign.Left
         )
-        Text(
-            text = stringResource(id = R.string.first_name),
-            style = Typography.h6,
-            modifier = Modifier
-                .align(Alignment.Start)
-                .padding(bottom = 5.dp)
+        TextFieldAndDescription(
+            inputValue = firstName,
+            descriptionResource = R.string.first_name
         )
-        Text(
-            text = firstName,
-            textAlign = TextAlign.Start,
-            style = Typography.h5,
-            modifier = Modifier
-                .border(1.dp, Color.Gray, RoundedCornerShape(8.dp))
-                .padding(10.dp)
-                .fillMaxWidth(),
+        TextFieldAndDescription(
+            inputValue = lastName,
+            descriptionResource = R.string.last_name
         )
-        Text(
-            text = stringResource(id = R.string.last_name),
-            style = Typography.h6,
-            modifier = Modifier
-                .align(Alignment.Start)
-                .padding(top = 30.dp, bottom = 5.dp)
-        )
-        Text(
-            text = lastName,
-            textAlign = TextAlign.Start,
-            style = Typography.h5,
-            modifier = Modifier
-                .border(1.dp, Color.Gray, RoundedCornerShape(8.dp))
-                .padding(10.dp)
-                .fillMaxWidth(),
-        )
-        Text(
-            text = stringResource(id = R.string.email),
-            style = Typography.h6,
-            modifier = Modifier
-                .align(Alignment.Start)
-                .padding(top = 30.dp, bottom = 5.dp)
-        )
-        Text(
-            text = email,
-            textAlign = TextAlign.Start,
-            style = Typography.h5,
-            modifier = Modifier
-                .border(1.dp, Color.Gray, RoundedCornerShape(8.dp))
-                .padding(10.dp)
-                .fillMaxWidth(),
-        )
-
+        TextFieldAndDescription(
+            inputValue = email,
+            descriptionResource = R.string.email)
         Button(
             onClick = {
                 sharedPreferences.edit().clear().commit()
@@ -116,7 +78,7 @@ fun Profile(navController: NavHostController) {
             colors = ButtonDefaults.buttonColors(backgroundColor = YellowMain),
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 40.dp)
+                .padding(top = 70.dp)
         ) {
             Text(
                 text = stringResource(id = R.string.log_out),
@@ -131,3 +93,23 @@ fun Profile(navController: NavHostController) {
 fun ProfilePreview(){
     Profile(rememberNavController())
 }
+
+@Composable
+fun TextFieldAndDescription(inputValue: String, descriptionResource: Int){
+    Text(
+        text = stringResource(id = descriptionResource),
+        style = Typography.h6,
+        modifier = Modifier
+            .padding(bottom = 5.dp)
+    )
+    OutlinedTextField(
+        value = inputValue,
+        onValueChange = {},
+        readOnly = true,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 30.dp),
+        shape = RoundedCornerShape(8.dp),
+    )
+}
+
