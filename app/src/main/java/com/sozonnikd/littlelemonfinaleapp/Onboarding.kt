@@ -3,17 +3,13 @@ package com.sozonnikd.littlelemonfinaleapp
 
 import android.content.Context
 import android.widget.Toast
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -26,7 +22,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -34,6 +29,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.sozonnikd.littlelemonfinaleapp.ui.elements.RestaurantLogo
+import com.sozonnikd.littlelemonfinaleapp.ui.elements.TextFieldInputAndDescription
 import com.sozonnikd.littlelemonfinaleapp.ui.theme.Typography
 import com.sozonnikd.littlelemonfinaleapp.ui.theme.YellowMain
 
@@ -53,16 +50,12 @@ fun Onboarding(navController: NavHostController) {
     }
 
     Column(
-        modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
+        horizontalAlignment = Alignment.Start,
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(start = 10.dp, end = 10.dp),
     ) {
-        Image(
-            painter = painterResource(id = R.drawable.logo),
-            contentDescription = "restaurant logo",
-            modifier = Modifier
-                .width(150.dp)
-                .padding(10.dp)
-        )
+        RestaurantLogo(modifier = Modifier.align(Alignment.CenterHorizontally))
         Text(
             text = stringResource(id = R.string.greetings_onboarding),
             style = Typography.h5,
@@ -73,57 +66,29 @@ fun Onboarding(navController: NavHostController) {
                 .fillMaxWidth(),
             textAlign = TextAlign.Center
         )
-
         Text(
             text = stringResource(id = R.string.personal_info),
             style = Typography.h5,
             fontWeight = FontWeight.Bold,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(10.dp, 50.dp),
-            textAlign = TextAlign.Left
+                .padding(vertical = 50.dp),
+
         )
-        Text(
-            text = stringResource(id = R.string.first_name),
-            style = Typography.h6,
-            modifier = Modifier
-                .align(Alignment.Start)
-                .padding(start = 10.dp, bottom = 5.dp))
-        OutlinedTextField(
-            value = firstName,
-            onValueChange = {input -> firstName = input},
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 10.dp, end = 10.dp, bottom = 30.dp),
-            shape = RoundedCornerShape(8.dp),
+        TextFieldInputAndDescription(
+            inputValue = firstName,
+            descriptionResource = R.string.first_name,
+            onValueChange = {input -> firstName = input}
         )
-        Text(
-            text = stringResource(id = R.string.last_name),
-            style = Typography.h6,
-            modifier = Modifier
-                .align(Alignment.Start)
-                .padding(start = 10.dp, bottom = 5.dp))
-        OutlinedTextField(
-            value = lastName,
-            onValueChange = {input -> lastName = input},
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 10.dp, end = 10.dp, bottom = 30.dp),
-            shape = RoundedCornerShape(8.dp),
+        TextFieldInputAndDescription(
+            inputValue = lastName,
+            descriptionResource = R.string.last_name,
+            onValueChange = {input -> lastName = input}
         )
-        Text(
-            text = stringResource(id = R.string.email),
-            style = Typography.h6,
-            modifier = Modifier
-                .align(Alignment.Start)
-                .padding(start = 10.dp, bottom = 5.dp))
-        OutlinedTextField(
-            value = email,
-            onValueChange = {input -> email = input},
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 10.dp, end = 10.dp, bottom = 30.dp),
-            shape = RoundedCornerShape(8.dp),
+        TextFieldInputAndDescription(
+            inputValue = email,
+            descriptionResource = R.string.email,
+            onValueChange = {input -> email = input}
         )
         Button(
             onClick = {
@@ -138,7 +103,7 @@ fun Onboarding(navController: NavHostController) {
             colors = ButtonDefaults.buttonColors(backgroundColor = YellowMain),
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 10.dp, end = 10.dp, top = 40.dp)
+                .padding(top = 40.dp)
         ) {
             Text(
                 text = stringResource(id = R.string.register),
@@ -155,7 +120,7 @@ fun OnboardingPreview(){
 }
 
 fun makeToast(context: Context, message: String){
-    Toast.makeText(context, message, Toast.LENGTH_LONG).show();
+    Toast.makeText(context, message, Toast.LENGTH_LONG).show()
 }
 
 fun saveData(context: Context, firstName: String, lastName: String, email: String){
@@ -165,27 +130,4 @@ fun saveData(context: Context, firstName: String, lastName: String, email: Strin
         .putString("lastName", lastName)
         .putString("email", email)
         .commit()
-}
-
-
-@Composable
-fun TextFieldInputAndDescription(inputValue: String,
-                                 descriptionResource: Int,
-                                 onValueChange: (String) -> Unit = {},
-                                 readOnly: Boolean = false, ) {
-    Text(
-        text = stringResource(descriptionResource),
-        style = Typography.h6,
-        modifier = Modifier
-            //.align(Alignment.Start)
-            .padding(start = 10.dp, bottom = 5.dp))
-    OutlinedTextField(
-        value = inputValue,
-        onValueChange = onValueChange,
-        readOnly = readOnly,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(start = 10.dp, end = 10.dp, bottom = 30.dp),
-        shape = RoundedCornerShape(8.dp),
-    )
 }

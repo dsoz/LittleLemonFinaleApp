@@ -5,7 +5,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -14,8 +13,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.OutlinedTextField
@@ -46,6 +43,8 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import androidx.room.Room
+import com.sozonnikd.littlelemonfinaleapp.ui.elements.CategoryButton
+import com.sozonnikd.littlelemonfinaleapp.ui.elements.RestaurantLogo
 import com.sozonnikd.littlelemonfinaleapp.ui.theme.GreyHighlight
 import com.sozonnikd.littlelemonfinaleapp.ui.theme.GreyMain
 import com.sozonnikd.littlelemonfinaleapp.ui.theme.Typography
@@ -69,18 +68,10 @@ fun Home(navController: NavHostController) {
 
         var searchField by remember { mutableStateOf("") }
 
-
-            Image(
-            painter = painterResource(id = R.drawable.logo),
-            contentDescription = "restaurant logo",
-            modifier = Modifier
-                .width(150.dp)
-                .padding(10.dp)
-                .constrainAs(logoImage) {
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
-                }
-        )
+        RestaurantLogo(modifier = Modifier.constrainAs(logoImage) {
+            start.linkTo(parent.start)
+            end.linkTo(parent.end)
+        })
         Image(
             painter = painterResource(id = R.drawable.profile),
             contentDescription = "profile photo",
@@ -187,12 +178,12 @@ fun Home(navController: NavHostController) {
                 .constrainAs(orderText) {
                     top.linkTo(backgroundBox.bottom, 5.dp)
                 }
-
         )
 
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier.padding(horizontal = 10.dp)
+            modifier = Modifier
+                .padding(horizontal = 10.dp)
                 .fillMaxWidth()
                 .constrainAs(row) {
                     top.linkTo(orderText.bottom, 5.dp)
@@ -225,9 +216,8 @@ fun Home(navController: NavHostController) {
                 }
         )
 
-
         if (searchField.isNotBlank()){
-            productListState.update { databaseMenuItems.filter { it.title.contains(searchField)} }
+            productListState.update { databaseMenuItems.filter { it.title.contains(searchField, ignoreCase = true)} }
         }
         MenuItems(
             items = productListState.collectAsState().value,
@@ -244,20 +234,4 @@ fun Home(navController: NavHostController) {
 @Composable
 fun HomePreview(){
     Home(rememberNavController())
-}
-
-@Composable
-fun CategoryButton(onClick: () -> Unit, categoryName:  String){
-    Button(
-        onClick = onClick,
-        colors = ButtonDefaults.buttonColors(backgroundColor = GreyHighlight),
-        contentPadding = PaddingValues(10.dp),
-        shape = RoundedCornerShape(15.dp),
-    ) {
-        Text(
-            text = categoryName,
-            fontSize = 20.sp,
-            style = Typography.button,
-        )
-    }
 }

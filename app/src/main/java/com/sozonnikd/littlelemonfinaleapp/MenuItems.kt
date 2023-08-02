@@ -52,7 +52,6 @@ fun MenuItems(items: List<MenuItemRoom>, modifier: Modifier) {
                             .width(220.dp)
                             .constrainAs(itemDescriptionText) {
                                 top.linkTo(itemTitleText.bottom)
-
                             }
                     )
                     GlideImage(
@@ -64,7 +63,6 @@ fun MenuItems(items: List<MenuItemRoom>, modifier: Modifier) {
                             .size(100.dp)
                             .padding(top = 5.dp)
                             .constrainAs(itemImage) {
-                                //  start.linkTo(itemDescriptionText.end, 5.dp)
                                 end.linkTo(parent.end, 5.dp)
                             },
                     )
