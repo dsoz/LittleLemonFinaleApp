@@ -9,5 +9,11 @@
     <string name="email">Email</string>
     <string name="restaurant_name">Little Lemon</string>
     <string name="city">Chicago</string>
+    <string name="order_text">ORDER FOR DELIVERY!</string>
+    <string name="search_placeholder">Enter search phrase</string>
+    <string name="starters">Starters</string>
+    <string name="mains">Mains</string>
+    <string name="deserts">Deserts</string>
+    <string name="drinks">Drinks</string>
     <string name="short_description">We are a family-owned Mediterranean restaurant, focused on traditional recipes served with a modern twist.</string>
 </resources>

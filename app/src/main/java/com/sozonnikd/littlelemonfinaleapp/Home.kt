@@ -3,7 +3,10 @@ package com.sozonnikd.littlelemonfinaleapp
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -11,6 +14,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
@@ -18,6 +24,7 @@ import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -30,6 +37,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -42,6 +50,8 @@ import com.sozonnikd.littlelemonfinaleapp.ui.theme.GreyHighlight
 import com.sozonnikd.littlelemonfinaleapp.ui.theme.GreyMain
 import com.sozonnikd.littlelemonfinaleapp.ui.theme.Typography
 import com.sozonnikd.littlelemonfinaleapp.ui.theme.YellowMain
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.update
 
 @Composable
 fun Home(navController: NavHostController) {
@@ -50,11 +60,12 @@ fun Home(navController: NavHostController) {
         Room.databaseBuilder(context, AppDatabase::class.java, "database").build()
     }
     val databaseMenuItems = database.menuItemDao().getAll().observeAsState(initial = emptyList()).value
+    val productListState: MutableStateFlow<List<MenuItemRoom>> = MutableStateFlow(databaseMenuItems)
 
     ConstraintLayout (modifier = Modifier.fillMaxWidth()){
         val (restNameText, cityText, descriptionText,
             photo, searchBox, logoImage, profileImage,
-            backgroundBox, menuList) = createRefs()
+            backgroundBox, menuList, divider, orderText, row) = createRefs()
 
         var searchField by remember { mutableStateOf("") }
 
@@ -147,16 +158,10 @@ fun Home(navController: NavHostController) {
             value = searchField,
             onValueChange = {input -> searchField = input},
             shape = RoundedCornerShape(10.dp),
+            singleLine = true,
             placeholder = {
-                Text(text = "Enter search phrase", textAlign = TextAlign.Center,)
+                Text(text = stringResource(id = R.string.search_placeholder), textAlign = TextAlign.Center)
             },
-            /*leadingIcon = {
-                          Image(
-                              painter = painterResource(
-                              id = androidx.constraintlayout.widget.R.drawable.abc_ic_search_api_material),
-                              contentDescription = ""
-                          )
-            }*/
             leadingIcon = {
                 Icon(
                     imageVector = Icons.Default.Search,
@@ -172,17 +177,63 @@ fun Home(navController: NavHostController) {
                     top.linkTo(photo.bottom, 10.dp)
                 }
         )
+        Text(
+            text = stringResource(id = R.string.order_text),
+            style = Typography.h5,
+            fontSize = 24.sp,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier
+                .padding(start = 10.dp)
+                .constrainAs(orderText) {
+                    top.linkTo(backgroundBox.bottom, 5.dp)
+                }
 
-        var menuItems = databaseMenuItems
+        )
+
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier.padding(horizontal = 10.dp)
+                .fillMaxWidth()
+                .constrainAs(row) {
+                    top.linkTo(orderText.bottom, 5.dp)
+                }
+        ) {
+            CategoryButton(
+                onClick = { productListState.update { databaseMenuItems.filter { it.category == "starters" } } },
+                categoryName = stringResource(id = R.string.starters)
+            )
+            CategoryButton(
+                onClick = { productListState.update { databaseMenuItems.filter { it.category == "mains" } } },
+                categoryName = stringResource(id = R.string.mains)
+            )
+            CategoryButton(
+                onClick = { productListState.update { databaseMenuItems.filter { it.category == "desserts" } } },
+                categoryName = stringResource(id = R.string.deserts)
+            )
+            CategoryButton(
+                onClick = { productListState.update { databaseMenuItems.filter { it.category == "drinks" } } },
+                categoryName = stringResource(id = R.string.drinks)
+            )
+        }
+        Divider(
+            color = GreyHighlight,
+            thickness = 1.dp,
+            modifier = Modifier
+                .padding(vertical = 5.dp)
+                .constrainAs(divider) {
+                    top.linkTo(row.bottom, 10.dp)
+                }
+        )
+
+
         if (searchField.isNotBlank()){
-            menuItems = databaseMenuItems.filter { it.title.contains(searchField) }
+            productListState.update { databaseMenuItems.filter { it.title.contains(searchField)} }
         }
         MenuItems(
-            items = menuItems,
+            items = productListState.collectAsState().value,
             modifier = Modifier
                 .constrainAs(menuList){
-                    top.linkTo(backgroundBox.bottom)
-
+                    top.linkTo(divider.bottom)
                 }
         )
     }
@@ -193,4 +244,20 @@ fun Home(navController: NavHostController) {
 @Composable
 fun HomePreview(){
     Home(rememberNavController())
+}
+
+@Composable
+fun CategoryButton(onClick: () -> Unit, categoryName:  String){
+    Button(
+        onClick = onClick,
+        colors = ButtonDefaults.buttonColors(backgroundColor = GreyHighlight),
+        contentPadding = PaddingValues(10.dp),
+        shape = RoundedCornerShape(15.dp),
+    ) {
+        Text(
+            text = categoryName,
+            fontSize = 20.sp,
+            style = Typography.button,
+        )
+    }
 }
